@@ -1,0 +1,136 @@
+
+import React, { useState } from 'react';
+import { ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../../firebase';
+
+const ImageUploader = ({ initialFolder, onUploadSuccess }) => {
+    const [file, setFile] = useState(null);
+
+    const handleUpload = async () => {
+        if (!file) return;
+        const storageRef = ref(storage, `${initialFolder}/${file.name}`);
+        try {
+            await uploadBytes(storageRef, file);
+            onUploadSuccess(); // Вызовем функцию после успешной загрузки
+            setFile(null); // Сбросим файл после загрузки
+        } catch (error) {
+            console.error("Upload failed:", error);
+        }
+    };
+
+    return (
+        <div>
+            <input
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+            />
+            <button onClick={handleUpload}>Upload</button>
+        </div>
+    );
+};
+
+export default ImageUploader;
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import { storage } from '../../firebase';
+import { ref, uploadBytes } from 'firebase/storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFoldersFromStorage } from '../../Store/Slices/FolderSlices';
+
+const ImageUploader = ({ initialFolder }) => {
+    const dispatch = useDispatch();
+    const { folders } = useSelector((state) => state.folders);
+    const [file, setFile] = useState(null);
+    const [folder, setFolder] = useState(initialFolder || '');
+
+    useEffect(() => {
+        dispatch(fetchFoldersFromStorage());
+    }, [dispatch]);
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleFolderChange = (e) => {
+        setFolder(e.target.value);
+    };
+
+    const handleUpload = async () => {
+        if (!file || !folder) {
+            alert('Please select a file and a folder.');
+            return;
+        }
+
+        const storageRef = ref(storage, `${folder}/${file.name}`); // Убедитесь, что gender правильно используется
+        await uploadBytes(storageRef, file);
+        alert('File uploaded successfully!');
+        dispatch(fetchFoldersFromStorage());
+    };
+
+    return (
+        <div>
+            <h1>Upload Image</h1>
+            <input type="text" placeholder="Folder Name" value={folder} onChange={handleFolderChange} />
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleUpload}>Upload</button>
+        </div>
+    );
+};
+
+export default ImageUploader;
+
+
+
+import React, { useEffect, useState } from 'react';
+import { storage } from '../../firebase';
+import { ref, uploadBytes } from 'firebase/storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFoldersFromStorage } from '../../Store/Slices/FolderSlices';
+
+const ImageUploader = ({ initialFolder }) => {
+    const dispatch = useDispatch();
+    const { folders } = useSelector((state) => state.folders);
+    const [file, setFile] = useState(null);
+    const [folder, setFolder] = useState(initialFolder || '');
+
+    useEffect(() => {
+        dispatch(fetchFoldersFromStorage());
+    }, [dispatch]);
+
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const handleFolderChange = (e) => {
+        setFolder(e.target.value);
+    };
+
+    const handleUpload = async () => {
+        if (!file || !folder) {
+            alert('Please select a file and a folder.');
+            return;
+        }
+
+        const storageRef = ref(storage, `${folder}/${file.name}`); // Убедитесь, что gender правильно используется
+        await uploadBytes(storageRef, file);
+        alert('File uploaded successfully!');
+        dispatch(fetchFoldersFromStorage());
+    };
+
+    return (
+        <div>
+            <h1>Upload Image</h1>
+            <input type="text" placeholder="Folder Name" value={folder} onChange={handleFolderChange} />
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleUpload}>Upload</button>
+        </div>
+    );
+};
+
+export default ImageUploader;
+
+
+
