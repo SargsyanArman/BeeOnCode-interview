@@ -6,7 +6,7 @@ import { fetchFoldersFromStorage } from "../../Store/Slices/FolderSlices";
 import { Button, TextField, Typography, Box, Paper, Input, IconButton } from "@mui/material";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 
-const ImageUploadOnFolder = ({ initialFolder }) => {
+const AddFolderInFolder = ({ initialFolder }) => {
     const dispatch = useDispatch();
     const { folders } = useSelector((state) => state.folders);
     const [file, setFile] = useState(null);
@@ -114,4 +114,4 @@ const ImageUploadOnFolder = ({ initialFolder }) => {
     );
 };
 
-export default ImageUploadOnFolder;
+export default AddFolderInFolder;

@@ -4,6 +4,7 @@ import Home from "./Components/Routes/Home";
 import SignUp from './Components/Routes/SignForm/SignUp';
 import SignIn from "./Components/Routes/SignForm/SignIn";
 import FolderView from "./Components/Main/FolderView";
+import SubFolderView from './Components/Main/SubFolderView'
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,8 @@ const router = createBrowserRouter([
     children: [
       { path: "signup", element: <SignUp /> },
       { path: "signin", element: <SignIn /> },
-      { path: "folder/:folderName", element: <FolderView /> },
+      { path: "folder/:folderName", element: <FolderView />, children: [] },
+      { path: "folder/:folderName/:subFolderName?", element: <SubFolderView /> },
     ],
   },
 ]);

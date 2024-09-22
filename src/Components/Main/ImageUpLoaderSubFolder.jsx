@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ref, uploadBytes } from 'firebase/storage';
 import { storage } from '../../firebase';
 
-const ImageUploader = ({ initialFolder }) => {
+const ImageUpLoaderSubFolder = ({ initialFolder, onUpload }) => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ const ImageUploader = ({ initialFolder }) => {
     const handleUpload = async () => {
         if (!file) return;
 
-        const storageRef = ref(storage, `${initialFolder}/${file.name}`); // Здесь используем путь к субкаталогу
+        const storageRef = ref(storage, `${initialFolder}/${file.name}`);
         setUploading(true);
         setError(null);
 
@@ -18,6 +18,7 @@ const ImageUploader = ({ initialFolder }) => {
             await uploadBytes(storageRef, file);
             alert('Upload successful!');
             setFile(null);
+            onUpload(); // Вызов функции обновления после загрузки
         } catch (err) {
             setError(err.message);
         } finally {
@@ -36,4 +37,4 @@ const ImageUploader = ({ initialFolder }) => {
     );
 };
 
-export default ImageUploader;
+export default ImageUpLoaderSubFolder;

@@ -4,11 +4,12 @@ import { fetchFoldersFromStorage } from '../../Store/Slices/FolderSlices';
 import { Link, useParams } from 'react-router-dom';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
-import { AppBar, Toolbar, IconButton, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Modal, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import ImageUpLoadOnFolder from './ImageUpLoadOnFolder';
 import { ref, listAll, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase';
+import ImageUploadOnFolder from './ImageUpLoadOnFolder';
+import AddIcon from '@mui/icons-material/Add';
 
 const Main = () => {
     const dispatch = useDispatch();
@@ -17,6 +18,12 @@ const Main = () => {
     const [folderImages, setFolderImages] = useState({});
     const [loadings, setLoadings] = useState(false);
     const [errors, setErrors] = useState(null);
+
+    // Состояние для отображения модального окна
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
 
     useEffect(() => {
         dispatch(fetchFoldersFromStorage());
@@ -28,19 +35,16 @@ const Main = () => {
             try {
                 const images = {};
                 for (const folder of folders) {
-                    const maleRef = ref(storage, `${folder}/male/`);
-                    const femaleRef = ref(storage, `${folder}/female/`);
+                    const folderRef = ref(storage, `${folder}/`);
+                    const res = await listAll(folderRef);
+                    const imageUrls = await Promise.all(
+                        res.items.map(item => getDownloadURL(item))
+                    );
 
-                    const maleRes = await listAll(maleRef);
-                    const femaleRes = await listAll(femaleRef);
-
-                    const maleImageUrls = await Promise.all(maleRes.items.map(item => getDownloadURL(item)));
-                    const femaleImageUrls = await Promise.all(femaleRes.items.map(item => getDownloadURL(item)));
-
-                    images[folder] = {
-                        male: maleImageUrls.length > 0 ? maleImageUrls[0] : null,
-                        female: femaleImageUrls.length > 0 ? femaleImageUrls[0] : null,
-                    };
+                    // Сохраняем только первое изображение для каждой папки
+                    if (imageUrls.length > 0) {
+                        images[folder] = imageUrls[0];
+                    }
                 }
                 setFolderImages(images);
             } catch (err) {
@@ -58,18 +62,16 @@ const Main = () => {
         <>
             <AppBar position="static" style={{ backgroundColor: '#6200ea' }}>
                 <Toolbar>
-                    <div>
-                        <IconButton color="inherit">
-                            <FemaleIcon />
-                        </IconButton>
-                        <IconButton color="inherit">
-                            <MaleIcon />
-                        </IconButton>
-                    </div>
                     {loading && <p>Loading folders...</p>}
                     {error && <p>Error: {error}</p>}
+                    <IconButton color="inherit">
+                        <FemaleIcon />
+                    </IconButton>
+                    <IconButton color="inherit">
+                        <MaleIcon />
+                    </IconButton>
                     {folders.map((folder) => (
-                        <div key={folder} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginRight: '10px' }}>
+                        <div key={folder} style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
                             <Button
                                 variant="outlined"
                                 color="inherit"
@@ -78,26 +80,49 @@ const Main = () => {
                                 to={`/folder/${folder}`}
                             >
                                 {folder}
-                                {folderImages[folder]?.male && (
+                                {folderImages[folder] && (
                                     <img
-                                        src={folderImages[folder].male}
-                                        alt={`Male Image of ${folder}`}
-                                        style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '5px' }}
-                                    />
-                                )}
-                                {folderImages[folder]?.female && (
-                                    <img
-                                        src={folderImages[folder].female}
-                                        alt={`Female Image of ${folder}`}
-                                        style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '5px' }}
+                                        src={folderImages[folder]}
+                                        alt={`Image of ${folder}`}
+                                        style={{ width: '30px', height: '30px', borderRadius: '50%' }}
                                     />
                                 )}
                             </Button>
                         </div>
                     ))}
+
+                    <IconButton onClick={handleOpen}>
+                        <AddIcon />
+                    </IconButton>
                 </Toolbar>
             </AppBar>
-            <ImageUpLoadOnFolder />
+
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                    }}
+                >
+                    <ImageUploadOnFolder />
+                    <Button onClick={handleClose} variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Close
+                    </Button>
+                </Box>
+            </Modal>
+
             <h2 style={{ textAlign: 'center', marginTop: '30px' }}>Welcome to the Image Uploader!</h2>
         </>
     );
