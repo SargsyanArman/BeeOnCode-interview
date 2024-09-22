@@ -1,9 +1,6 @@
 import React from 'react';
 
 const ImageList = ({ images }) => {
-    if (images.length === 0) {
-        return <p>No images found in this folder.</p>;
-    }
 
     return (
         <div>
