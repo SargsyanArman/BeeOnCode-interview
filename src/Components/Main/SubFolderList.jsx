@@ -22,7 +22,7 @@ const SubfolderList = ({ folders }) => {
     }
 
     const { pathname } = useLocation();
-    const [hover, setHover] = useState(-1); // Use index-based hover for multiple folders
+    const [hover, setHover] = useState(-1);
 
     const handleMouseEnter = (index) => setHover(index);
     const handleMouseLeave = () => setHover(-1);

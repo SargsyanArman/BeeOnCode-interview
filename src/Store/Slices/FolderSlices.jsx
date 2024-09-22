@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { db, storage } from '../../firebase'; // Проверьте правильность пути
+import { db, storage } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { ref, listAll } from 'firebase/storage';
 
@@ -40,5 +40,4 @@ const folderSlice = createSlice({
     },
 });
 
-// Экспортируем редюсер
 export default folderSlice.reducer;

@@ -24,11 +24,11 @@ const fetchUser = async (id) => {
       return docSnap.data();
     } else {
       console.warn("User does not exist");
-      return null; // Return null to handle missing data case
+      return null;
     }
   } catch (error) {
     console.error("Error fetching user:", error);
-    return null; // Return null on error as well
+    return null;
   }
 };
 

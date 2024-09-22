@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ImageUpLoaderSubFolder from './ImageUpLoaderSubFolder';
 import ImagesList from './ImagesList';
-import { ref, listAll, getDownloadURL } from 'firebase/storage';
+import { ref, listAll, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { storage } from '../../firebase';
 
 const SubFolderView = () => {
@@ -12,10 +12,10 @@ const SubFolderView = () => {
     const fetchImages = async () => {
         const subFolderRef = ref(storage, `${folderName}/${subFolderName}/`);
         const res = await listAll(subFolderRef);
-
         const imageUrls = await Promise.all(res.items.map(item => getDownloadURL(item)));
         setImages(imageUrls);
     };
+
 
     useEffect(() => {
         fetchImages();

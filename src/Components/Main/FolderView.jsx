@@ -9,13 +9,13 @@ import SubFolderList from './SubFolderList';
 
 const FolderView = () => {
     const { folderName } = useParams();
-    const location = useLocation(); // Получаем текущий путь
+    const location = useLocation();
     const [images, setImages] = useState([]);
     const [folders, setFolders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [newSubfolder, setNewSubfolder] = useState('');
-    const [openModal, setOpenModal] = useState(false); // Состояние для модального окна
-    const [navValue, setNavValue] = useState(0); // Состояние для BottomNavigation
+    const [openModal, setOpenModal] = useState(false);
+    const [navValue, setNavValue] = useState(0);
 
     const fetchContents = async () => {
         setLoading(true);
@@ -51,7 +51,7 @@ const FolderView = () => {
             await uploadBytes(subfolderRef, placeholder);
             alert('Subfolder created successfully!');
             setNewSubfolder('');
-            setOpenModal(false); // Закрыть модальное окно после создания
+            setOpenModal(false);
             fetchContents();
         } catch (error) {
             alert(`Error creating subfolder: ${error.message}`);
@@ -62,7 +62,6 @@ const FolderView = () => {
     const handleCloseModal = () => setOpenModal(false);
 
     useEffect(() => {
-        // Обновляем значение BottomNavigation при изменении пути
         const activeIndex = folders.findIndex(folder => `/folder/${folder}` === location.pathname);
         setNavValue(activeIndex !== -1 ? activeIndex : 0);
     }, [location.pathname, folders]);
@@ -71,7 +70,6 @@ const FolderView = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* Bottom Navigation для роутинга между папками */}
             <BottomNavigation
                 value={navValue}
                 onChange={(event, newValue) => setNavValue(newValue)}

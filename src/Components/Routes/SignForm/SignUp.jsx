@@ -21,7 +21,7 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Copyright from "../../../helperComponents/Copyright";
-import { db } from "../../../firebase"; // Import your Firestore instance
+import { db } from "../../../firebase";
 
 const defaultTheme = createTheme();
 
@@ -34,7 +34,6 @@ export default function AccMenu() {
   const navigate = useNavigate();
   const auth = getAuth();
 
-  // Handle Form Submission
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -59,7 +58,6 @@ export default function AccMenu() {
         dateOfBirth,
       });
 
-      // Dispatch the user details
       dispatch(
         setUser({
           email: user.email,
@@ -75,12 +73,10 @@ export default function AccMenu() {
     }
   };
 
-  // Handle Gender Change
   const handleGenderChange = (event) => {
     setGender(event.target.value);
   };
 
-  // Handle Date of Birth Change
   const handleDateOfBirthChange = (event) => {
     setDateOfBirth(event.target.value);
   };

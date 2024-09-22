@@ -36,9 +36,9 @@ const AddFolderInFolder = ({ initialFolder }) => {
             const storageRef = ref(storage, `${folder}/${file.name}`);
             await uploadBytes(storageRef, file);
             alert('File uploaded successfully!');
-            dispatch(fetchFoldersFromStorage()); // Обновляем список папок
-            setFile(null); // Сбрасываем файл после загрузки
-            setFolder(''); // Сбрасываем папку после загрузки
+            dispatch(fetchFoldersFromStorage());
+            setFile(null);
+            setFolder('');
         } catch (error) {
             alert(`Error uploading file: ${error.message}`);
         } finally {
